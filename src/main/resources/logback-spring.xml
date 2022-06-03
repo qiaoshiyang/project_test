@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<configuration scan="true" scanPeriod="30 seconds" debug="false">
+
+    <!-- 日志的打印格式，不带颜色，因为带颜色的在文件中不显示 -->
+    <property name="filePattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{10}: %msg%n"/>
+    <!-- 控制台日志的打印格式，带颜色的 -->
+    <property name="logPattern" value="%red(%d{yyyy-MM-dd HH:mm:ss.SSS}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{10}): %cyan(%msg%n)"/>
+    <!-- 日志文件输出路径 -->
+    <property name="filePath" value="./logs"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${logPattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- debug日志在文件中打印的滚动日志配置，会单独生成一个文件 -->
+    <appender name="debugAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 设置当前输出文件名 -->
+        <file>${filePath}/debug.log</file>
+        <!-- 按照时间滚动自动打包存档 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 打包的文件名，当前设置到分(HH_mm)级别 -->
+            <fileNamePattern>${filePath}/debug-%d{yyyyMMddHHmm}-%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <maxFileSize>100MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${filePattern}</pattern>
+        </encoder>
+        <!-- 日志过滤，匹配到DEBUG级别的才输出到此文件，未匹配到的不输出 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- info日志在文件中打印的配置，会单独生成一个文件 -->
+    <appender name="infoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${filePath}/info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 打包的文件名，当前设置到分(HH_mm)级别 -->
+            <fileNamePattern>${filePath}/info-%d{yyyyMMddHHmm}-%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <maxFileSize>100MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${filePattern}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- error日志在文件中打印的配置，会单独生成一个文件 -->
+    <appender name="warnAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${filePath}/warn.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 打包的文件名，当前设置到分(HH_mm)级别 -->
+            <fileNamePattern>${filePath}/warn-%d{yyyyMMddHHmm}-%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <maxFileSize>100MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${filePattern}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- error日志在文件中打印的配置，会单独生成一个文件 -->
+    <appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${filePath}/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 打包的文件名，当前设置到分(HH_mm)级别 -->
+            <fileNamePattern>${filePath}/error-%d{yyyyMMddHHmm}-%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <maxFileSize>100MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${filePattern}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <!-- 开发环境配置自动根据springboot配置的环境配置(此配置根据maven的配置生效)生效 -->
+    <springProfile name="dev">
+        <!-- 配置的name值可以设置只在某包下的类生效，addtivity为true时相当于继承了root的配置，这样就会在控制台中也打印日志了，无需在此写一遍consoleAppender -->
+        <logger name="com.qsy" level="DEBUG" additivity="true">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="debugAppender"/>
+            <appender-ref ref="infoAppender"/>
+            <appender-ref ref="warnAppender"/>
+            <appender-ref ref="errorAppender"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="test">
+        <logger name="com.qsy" level="INFO" additivity="true">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="debugAppender"/>
+            <appender-ref ref="infoAppender"/>
+            <appender-ref ref="warnAppender"/>
+            <appender-ref ref="errorAppender"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="prod">
+        <logger name="com.qsy" level="INFO" additivity="true">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="debugAppender"/>
+            <appender-ref ref="infoAppender"/>
+            <appender-ref ref="warnAppender"/>
+            <appender-ref ref="errorAppender"/>
+        </logger>
+    </springProfile>
+
+</configuration>

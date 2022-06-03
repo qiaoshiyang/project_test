@@ -1,3 +1,9 @@
 spring:
   profiles:
     active: @profiles.active@
+  application:
+    name: DEMO_TEST
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    org.springframework.boot.autoconfigure.logging: info

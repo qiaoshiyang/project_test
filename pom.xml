@@ -20,8 +20,17 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-logging</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -50,6 +59,17 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>application.yml</include>
+					<include>application-${profiles.active}.yml</include>
+					<include>logback-spring.xml</include>
+				</includes>
+			</resource>
+		</resources>
 	</build>
 
 	<profiles>
@@ -63,9 +83,18 @@
 			</activation>
 		</profile>
 		<profile>
-			<id>prod</id>
+			<id>test</id>
 			<properties>
-				<profiles.active>prod</profiles.active>
+				<profiles.active>test</profiles.active>
+			</properties>
+<!--			<activation>-->
+<!--				<activeByDefault>true</activeByDefault>-->
+<!--			</activation>-->
+		</profile>
+		<profile>
+			<id>pro</id>
+			<properties>
+				<profiles.active>pro</profiles.active>
 			</properties>
 <!--			<activation>-->
 <!--				<activeByDefault>true</activeByDefault>-->
